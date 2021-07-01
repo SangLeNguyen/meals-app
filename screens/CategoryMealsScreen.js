@@ -1,48 +1,43 @@
+
 import React from 'react';
-import { View, Text, Button, StyleSheet} from 'react-native';
+import {View, Text, FlatList, StyleSheet} from 'react-native';
+import { CATEGORIES, MEALS } from '../data/dummy-data';
+import MealItem from '../components/MealItem';
 
-import { CATEGORIES} from '../data/dummy-data';
+const CategoryMealScreen = props => {
+  const renderMealItem = itemData => {
+    return <MealItem title={itemData.item.title} onSelectMeal={() => {}} />;
+  };
 
+  const catId = props.navigation.getParam('categoryId');
 
+  const displayedMeals = MEALS.filter(
+    meal => meal.categoryIds.indexOf(catId) >=0
+  );
 
-const CategoryMealsScreen = props => {
-    const catId = props.navigation.getParam('categoryId');
-
-    const selectedCategory = CATEGORIES.find(cat => cat.id === catId);
-
-    return(
-        <View style= {styles.screen}>
-            <Text>The Category Meals Screen !</Text>
-            <Text>{selectedCategory.title}</Text>
-            <Button title="Go to Details" onPress={() => {
-              props.navigation.navigate({
-                  routeName: 'MealDetail'
-              });
-            }} />
-            <Button title="Go Back" onPress={() =>
-            {
-                props.navigation.pop();
-            }}/>
-        </View>
+    return (
+      <View style={styles.screen}>
+        <FlatList 
+        data={displayedMeals} 
+        keyExtractor={(item, index) => item.id} 
+        renderItem={renderMealItem}/>
+      </View>
     );
 };
 
-CategoryMealsScreen.navigationOptions = navigationData => {
-    const catId = navigationData.navigation.getParam('categoryId');
+CategoryMealScreen.navigationOptions = navigationData => {
+  const catId = navigationData.navigation.getParam('categoryId');
+  
+  const selectedCategory = CATEGORIES.find(cat => cat.id === catId)
 
-    const selectedCategory = CATEGORIES.find(cat => cat.id === catId);
-
-    return {
-        headerTitle: selectedCategory.title,
-    };
+  return {
+    headerTitle: selectedCategory.title
+  };
 };
 
 const styles = StyleSheet.create({
     screen:{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+      flex:1
     }
 });
-
-export default CategoryMealsScreen;
+export default CategoryMealScreen;
